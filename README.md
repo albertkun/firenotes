@@ -1,19 +1,24 @@
 # FireNotes 🔥📝
 
-A modern, lightweight Firefox extension that provides a quick popup notepad for copying and pasting content. Perfect for temporary notes, code snippets, and quick text storage.
+A modern, lightweight Firefox extension that provides a quick popup notepad with multiple pages for organizing notes. Inspired by Windows Sticky Notes with a clean, modern shadcn/ui design aesthetic.
 
 ![FireNotes](icons/icon-96.png)
 
 ## Features ✨
 
+- **Multiple Note Pages**: Create and manage multiple notes, similar to Windows Sticky Notes
+- **Tab Navigation**: Easy switching between notes with a bottom tab bar
 - **Quick Access**: Click the toolbar icon to instantly open your notepad
 - **Auto-Save**: Your notes are automatically saved to local storage
+- **Smart Titles**: Note titles auto-generate from the first line of content
 - **Character Count**: Real-time character counter to track your note length
-- **Modern UI**: Clean, intuitive interface with a pleasant user experience
+- **Modern UI**: Clean, shadcn/ui-inspired interface with smooth animations
+- **Floating Add Button**: Prominent "+" button at the bottom-right to add new notes
 - **Keyboard Shortcuts**: 
-  - `Ctrl/Cmd + S`: Manually save notes
-  - `Ctrl/Cmd + Shift + Delete`: Clear all notes (with confirmation)
-- **Persistent Storage**: Your notes persist across browser sessions
+  - `Ctrl/Cmd + S`: Manually save current note
+  - `Ctrl/Cmd + N`: Create new note
+  - `Ctrl/Cmd + W`: Delete current note
+- **Persistent Storage**: All your notes persist across browser sessions
 - **No Internet Required**: Works completely offline
 
 ## Installation 🚀
@@ -50,8 +55,11 @@ For Firefox Developer Edition or Firefox Nightly:
 1. **Open the notepad**: Click the FireNotes icon in your Firefox toolbar
 2. **Start typing**: The notepad automatically focuses and is ready to use
 3. **Auto-save**: Your notes are saved automatically as you type
-4. **Clear notes**: Click the trash icon to clear all notes (confirmation required)
-5. **Character count**: See the character count in the top-right corner
+4. **Add new notes**: Click the floating "+" button at the bottom-right
+5. **Switch notes**: Click on note tabs at the bottom to switch between notes
+6. **Delete notes**: Click the "×" on a note tab or the trash icon in the header (with confirmation)
+7. **Character count**: See the character count in the top-right corner
+8. **Note titles**: First line of your note becomes the tab title automatically
 
 ## Development 🛠️
 
@@ -76,9 +84,9 @@ firenotes/
 ### Technologies Used
 
 - **HTML5**: Structure and semantic markup
-- **CSS3**: Modern styling with custom properties
-- **JavaScript (ES6+)**: Functionality and storage handling
-- **WebExtensions API**: Browser integration and storage
+- **CSS3**: Modern styling with HSL-based color system (shadcn/ui inspired)
+- **JavaScript (ES6+)**: Multi-note functionality and storage handling
+- **WebExtensions API**: Browser integration and local storage
 
 ## Contributing 🤝
 
