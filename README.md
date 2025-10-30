@@ -98,11 +98,13 @@ Contributions are welcome! Feel free to:
 
 ## License 📄
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+Hippocratic License 3.0 (see `LICENSE` and `LICENSE-ETHICAL.md`).
+
+Using the Ethical Source option requires compliance with the Hippocratic License terms. If you need an OSI-approved license only, use GPL-3.0.
 
 ## Privacy 🔒
 
-FireNotes stores all data locally using the browser's local storage API. No data is ever sent to external servers or third parties.
+See the privacy policy in `PRIVACY.md`. FireNotes stores data locally and does not send data to any server.
 
 ## Support 💬
 

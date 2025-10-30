@@ -14,7 +14,13 @@
     "default_title": "FireNotes",
     "default_popup": "popup/popup.html"
   },
+  "options_ui": {
+    "page": "about.html",
+    "open_in_tab": true
+  },
   "permissions": [
-    "storage"
+    "storage",
+    "clipboardWrite",
+    "clipboardRead"
   ]
 }

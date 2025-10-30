@@ -7,6 +7,10 @@ const saveStatus = document.getElementById('saveStatus');
 const tabsContainer = document.getElementById('tabsContainer');
 const colorPickerBtn = document.getElementById('colorPickerBtn');
 const colorPickerDropdown = document.getElementById('colorPickerDropdown');
+// New toolbar buttons and color input
+const copyBtn = document.getElementById('copyBtn');
+const pastePlainBtn = document.getElementById('pastePlainBtn');
+const customColorInput = document.getElementById('customColorInput');
 
 // Storage keys
 const NOTES_KEY = 'firenotes_notes';
@@ -15,6 +19,8 @@ const ACTIVE_NOTE_KEY = 'firenotes_active_note';
 // State
 let notes = [];
 let activeNoteId = null;
+// Controls whether to force plain text on next paste
+let forcePlainPasteOnce = false;
 
 // Generate unique ID
 function generateId() {
@@ -66,7 +72,8 @@ async function loadActiveNote() {
   const note = notes.find(n => n.id === activeNoteId);
   if (note) {
     notepad.value = note.content || '';
-    notepad.setAttribute('data-color', note.color || 'default');
+    // Apply color
+    applyNoteColor(note);
     updateCharCount();
     updateTabsUI();
     updateColorPickerUI();
@@ -80,6 +87,9 @@ function createNewNote() {
     content: '',
     title: `Note ${notes.length + 1}`,
     color: 'default',
+    // when color === 'custom', also store customBg and customFg
+    customBg: undefined,
+    customFg: undefined,
     createdAt: Date.now(),
     updatedAt: Date.now()
   };
@@ -244,8 +254,107 @@ function updateTabsUI() {
   });
 }
 
+// Color picker functionality
+function toggleColorPicker() {
+  colorPickerDropdown.classList.toggle('show');
+}
+
+function updateColorPickerUI() {
+  const note = notes.find(n => n.id === activeNoteId);
+  const currentColor = note ? note.color || 'default' : 'default';
+  
+  // Update active state on color options
+  const colorOptions = document.querySelectorAll('.color-option');
+  colorOptions.forEach(option => {
+    option.classList.toggle('active', option.dataset.color === currentColor);
+  });
+  
+  // Update custom picker swatch to current custom bg if present
+  if (customColorInput && note && note.color === 'custom' && note.customBg) {
+    customColorInput.value = rgbToHex(parseCssColor(note.customBg) || '#ffffff');
+  }
+}
+
+function changeNoteColor(color, customBg, customFg) {
+  const note = notes.find(n => n.id === activeNoteId);
+  if (note) {
+    note.color = color;
+    if (color === 'custom') {
+      if (customBg) note.customBg = customBg;
+      if (customFg) note.customFg = customFg;
+    }
+    applyNoteColor(note);
+    saveNotes();
+    updateColorPickerUI();
+    colorPickerDropdown.classList.remove('show');
+  }
+}
+
+function applyNoteColor(note) {
+  if (!note) return;
+  if (note.color === 'custom') {
+    notepad.setAttribute('data-color', 'custom');
+    if (note.customBg) notepad.style.setProperty('--custom-note-bg', note.customBg);
+    if (note.customFg) notepad.style.setProperty('--custom-note-fg', note.customFg);
+  } else {
+    notepad.removeAttribute('style');
+    notepad.setAttribute('data-color', note.color || 'default');
+  }
+}
+
+// Helpers for color conversion
+function rgbToHex(color) {
+  if (!color) return '#ffffff';
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.fillStyle = color;
+  const computed = ctx.fillStyle; // normalized
+  // computed like #rrggbb or rgba(...)
+  if (computed.startsWith('#')) return computed;
+  const m = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+  if (!m) return '#ffffff';
+  const r = Number(m[1]).toString(16).padStart(2, '0');
+  const g = Number(m[2]).toString(16).padStart(2, '0');
+  const b = Number(m[3]).toString(16).padStart(2, '0');
+  return `#${r}${g}${b}`;
+}
+
+function parseCssColor(color) {
+  // returns a normalized css color string via canvas
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.fillStyle = color;
+  return ctx.fillStyle || color;
+}
+
+function getReadableTextColor(bg) {
+  // Compute luminance and return dark or light text
+  const hex = rgbToHex(bg).replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  const [R, G, B] = [r, g, b].map(c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)));
+  const luminance = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  return luminance > 0.5 ? '#111827' : '#ffffff';
+}
+
 // Event listeners
 notepad.addEventListener('input', () => {
+  updateCharCount();
+  autoSave();
+});
+
+// Handle paste: if forcePlainPasteOnce set (via button), paste as plain
+notepad.addEventListener('paste', (e) => {
+  if (!forcePlainPasteOnce) return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  const start = notepad.selectionStart;
+  const end = notepad.selectionEnd;
+  const before = notepad.value.substring(0, start);
+  const after = notepad.value.substring(end);
+  notepad.value = `${before}${text}${after}`;
+  const cursor = start + text.length;
+  notepad.selectionStart = notepad.selectionEnd = cursor;
+  forcePlainPasteOnce = false;
   updateCharCount();
   autoSave();
 });
@@ -275,31 +384,49 @@ notepad.addEventListener('keydown', (e) => {
   }
 });
 
-// Color picker functionality
-function toggleColorPicker() {
-  colorPickerDropdown.classList.toggle('show');
-}
-
-function updateColorPickerUI() {
-  const note = notes.find(n => n.id === activeNoteId);
-  const currentColor = note ? note.color || 'default' : 'default';
-  
-  // Update active state on color options
-  const colorOptions = document.querySelectorAll('.color-option');
-  colorOptions.forEach(option => {
-    option.classList.toggle('active', option.dataset.color === currentColor);
-  });
-}
-
-function changeNoteColor(color) {
-  const note = notes.find(n => n.id === activeNoteId);
-  if (note) {
-    note.color = color;
-    notepad.setAttribute('data-color', color);
-    saveNotes();
-    updateColorPickerUI();
-    colorPickerDropdown.classList.remove('show');
+// Copy to clipboard
+copyBtn.addEventListener('click', async () => {
+  try {
+    const selection = notepad.value.substring(notepad.selectionStart, notepad.selectionEnd);
+    const toCopy = selection || notepad.value;
+    await navigator.clipboard.writeText(toCopy);
+    flashStatus('Copied');
+  } catch (err) {
+    console.error('Copy failed', err);
+    flashStatus('Copy failed');
   }
+});
+
+// Paste plain text on next paste
+pastePlainBtn.addEventListener('click', async () => {
+  // Try immediate paste if permission allows, otherwise set flag for next paste
+  try {
+    const text = await navigator.clipboard.readText();
+    // Simulate paste of plain text at cursor
+    const start = notepad.selectionStart;
+    const end = notepad.selectionEnd;
+    const before = notepad.value.substring(0, start);
+    const after = notepad.value.substring(end);
+    notepad.value = `${before}${text}${after}`;
+    const cursor = start + text.length;
+    notepad.selectionStart = notepad.selectionEnd = cursor;
+    updateCharCount();
+    autoSave();
+    flashStatus('Pasted');
+  } catch {
+    // Fallback: set flag to intercept next paste event
+    forcePlainPasteOnce = true;
+    flashStatus('Paste as plain text: ready');
+  }
+  notepad.focus();
+});
+
+function flashStatus(text) {
+  const prev = saveStatus.textContent;
+  saveStatus.textContent = text;
+  setTimeout(() => {
+    saveStatus.textContent = prev;
+  }, 800);
 }
 
 // Color picker event listeners
@@ -308,11 +435,21 @@ colorPickerBtn.addEventListener('click', (e) => {
   toggleColorPicker();
 });
 
+// Predefined colors
 document.querySelectorAll('.color-option').forEach(option => {
   option.addEventListener('click', () => {
     changeNoteColor(option.dataset.color);
   });
 });
+
+// Custom color handler
+if (customColorInput) {
+  customColorInput.addEventListener('input', () => {
+    const bg = customColorInput.value; // hex
+    const fg = getReadableTextColor(bg);
+    changeNoteColor('custom', bg, fg);
+  });
+}
 
 // Close color picker when clicking outside
 document.addEventListener('click', (e) => {

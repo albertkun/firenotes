@@ -95,3 +95,6 @@ To modify the extension:
 
 For issues or questions, please visit:
 https://github.com/albertkun/firenotes/issues
+
+## Privacy
+FireNotes stores notes locally in your browser and does not send data anywhere. See `PRIVACY.md` for details.

@@ -24,6 +24,21 @@
               <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
+          <!-- New: Copy to clipboard -->
+          <button id="copyBtn" class="btn-icon" title="Copy selection or note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 4H7C5.89543 4 5 4.89543 5 6V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <rect x="8" y="7" width="11" height="13" rx="2" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <!-- New: Paste as plain text -->
+          <button id="pastePlainBtn" class="btn-icon" title="Paste as plain text">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 4H16V7H8V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M6 7H18V20C18 21.1046 17.1046 22 16 22H8C6.89543 22 6 21.1046 6 20V7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M9 12H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
           <button id="deleteNoteBtn" class="btn-icon" title="Delete current note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 6H21M8 6V4C8 3.44772 8.44772 3 9 3H15C15.5523 3 16 3.44772 16 4V6M19 6V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V6H19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -63,6 +78,11 @@
             <div class="color-swatch" style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);"></div>
           </button>
         </div>
+        <!-- New: custom color picker -->
+        <div class="color-picker-custom">
+          <label for="customColorInput">Custom</label>
+          <input id="customColorInput" type="color" value="#ffffff" title="Pick any color" />
+        </div>
       </div>
       <div class="notes-container">
         <textarea 
@@ -94,6 +114,9 @@
             <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           <span id="saveStatus">Auto-saved</span>
+        </span>
+        <span class="privacy-note" title="FireNotes stores data locally and never sends it to a server.">
+          Private by design
         </span>
       </div>
     </footer>

@@ -105,6 +105,7 @@ body {
   color: hsl(var(--accent-foreground));
 }
 
+/* New: active state feedback for toolbar buttons */
 .btn-icon:active {
   transform: scale(0.95);
 }
@@ -187,6 +188,41 @@ body {
   height: 100%;
   border-radius: calc(var(--radius) - 4px);
   border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* New: custom color input row */
+.color-picker-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.color-picker-custom label {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.color-picker-custom input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 36px;
+  height: 28px;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.color-picker-custom input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.color-picker-custom input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius) - 4px);
 }
 
 .notes-container {
@@ -331,6 +367,9 @@ body {
   padding: 8px 16px;
   border-top: 1px solid hsl(var(--border));
   background: hsl(var(--muted));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .status-indicator {
@@ -361,6 +400,12 @@ body {
   50% {
     opacity: 0.4;
   }
+}
+
+.privacy-note {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  opacity: 0.8;
 }
 
 /* Scrollbar styling */
@@ -435,4 +480,10 @@ body {
 .note-textarea[data-color="red"] {
   background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
   color: #7f1d1d;
+}
+
+/* New: custom color theme via inline CSS var on textarea */
+.note-textarea[data-color="custom"] {
+  background: var(--custom-note-bg, #ffffff);
+  color: var(--custom-note-fg, #111827);
 }
