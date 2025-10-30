@@ -1,47 +1,180 @@
-// Get DOM elements
+// DOM elements
 const notepad = document.getElementById('notepad');
-const clearBtn = document.getElementById('clearBtn');
+const deleteNoteBtn = document.getElementById('deleteNoteBtn');
+const addNoteBtn = document.getElementById('addNoteBtn');
 const charCount = document.getElementById('charCount');
 const saveStatus = document.getElementById('saveStatus');
+const tabsContainer = document.getElementById('tabsContainer');
 
-// Storage key
-const STORAGE_KEY = 'firenotes_content';
+// Storage keys
+const NOTES_KEY = 'firenotes_notes';
+const ACTIVE_NOTE_KEY = 'firenotes_active_note';
 
-// Load saved content on startup
-async function loadSavedContent() {
+// State
+let notes = [];
+let activeNoteId = null;
+
+// Generate unique ID
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+// Initialize app
+async function init() {
+  await loadNotes();
+  if (notes.length === 0) {
+    createNewNote();
+  } else {
+    renderTabs();
+    await loadActiveNote();
+  }
+  updateCharCount();
+}
+
+// Load notes from storage
+async function loadNotes() {
   try {
-    const result = await browser.storage.local.get(STORAGE_KEY);
-    if (result[STORAGE_KEY]) {
-      notepad.value = result[STORAGE_KEY];
-      updateCharCount();
-    }
+    const result = await browser.storage.local.get([NOTES_KEY, ACTIVE_NOTE_KEY]);
+    notes = result[NOTES_KEY] || [];
+    activeNoteId = result[ACTIVE_NOTE_KEY] || null;
   } catch (error) {
-    console.error('Error loading saved content:', error);
+    console.error('Error loading notes:', error);
+    notes = [];
   }
 }
 
-// Save content to storage
-async function saveContent() {
+// Save notes to storage
+async function saveNotes() {
   try {
-    saveStatus.textContent = 'Saving...';
-    saveStatus.classList.add('saving');
-    saveStatus.parentElement.classList.add('saving');
-    
     await browser.storage.local.set({
-      [STORAGE_KEY]: notepad.value
+      [NOTES_KEY]: notes,
+      [ACTIVE_NOTE_KEY]: activeNoteId
     });
+  } catch (error) {
+    console.error('Error saving notes:', error);
+  }
+}
+
+// Load active note
+async function loadActiveNote() {
+  if (!activeNoteId && notes.length > 0) {
+    activeNoteId = notes[0].id;
+  }
+  
+  const note = notes.find(n => n.id === activeNoteId);
+  if (note) {
+    notepad.value = note.content || '';
+    updateCharCount();
+    updateTabsUI();
+  }
+}
+
+// Create new note
+function createNewNote() {
+  const newNote = {
+    id: generateId(),
+    content: '',
+    title: `Note ${notes.length + 1}`,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  
+  notes.push(newNote);
+  activeNoteId = newNote.id;
+  notepad.value = '';
+  
+  renderTabs();
+  saveNotes();
+  updateCharCount();
+  notepad.focus();
+}
+
+// Delete current note
+function deleteNote() {
+  if (notes.length === 1) {
+    // If only one note, just clear it
+    notepad.value = '';
+    saveCurrentNote();
+    notepad.focus();
+    return;
+  }
+  
+  if (!confirm('Delete this note?')) {
+    return;
+  }
+  
+  const noteIndex = notes.findIndex(n => n.id === activeNoteId);
+  if (noteIndex !== -1) {
+    notes.splice(noteIndex, 1);
     
-    setTimeout(() => {
-      saveStatus.textContent = 'Auto-saved';
+    // Switch to previous or next note
+    if (notes.length > 0) {
+      const newIndex = Math.max(0, noteIndex - 1);
+      activeNoteId = notes[newIndex].id;
+      loadActiveNote();
+    } else {
+      createNewNote();
+    }
+    
+    renderTabs();
+    saveNotes();
+  }
+}
+
+// Switch to note
+function switchToNote(noteId) {
+  if (activeNoteId === noteId) return;
+  
+  // Save current note before switching
+  saveCurrentNote();
+  
+  activeNoteId = noteId;
+  loadActiveNote();
+  saveNotes();
+}
+
+// Save current note content
+function saveCurrentNote() {
+  const note = notes.find(n => n.id === activeNoteId);
+  if (note) {
+    note.content = notepad.value;
+    note.updatedAt = Date.now();
+    
+    // Update title based on first line of content
+    const firstLine = notepad.value.split('\n')[0].trim();
+    if (firstLine) {
+      note.title = firstLine.substring(0, 20);
+    }
+  }
+}
+
+// Auto-save with debouncing
+let saveTimeout = null;
+async function autoSave() {
+  saveCurrentNote();
+  
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    try {
+      saveStatus.textContent = 'Saving...';
+      saveStatus.classList.add('saving');
+      saveStatus.parentElement.classList.add('saving');
+      
+      await saveNotes();
+      renderTabs(); // Update tab titles
+      
+      setTimeout(() => {
+        saveStatus.textContent = 'Auto-saved';
+        saveStatus.classList.remove('saving');
+        saveStatus.parentElement.classList.remove('saving');
+      }, 300);
+    } catch (error) {
+      console.error('Error auto-saving:', error);
+      saveStatus.textContent = 'Save failed';
       saveStatus.classList.remove('saving');
       saveStatus.parentElement.classList.remove('saving');
-    }, 300);
-  } catch (error) {
-    console.error('Error saving content:', error);
-    saveStatus.textContent = 'Save failed';
-    saveStatus.classList.remove('saving');
-    saveStatus.parentElement.classList.remove('saving');
-  }
+    }
+  }, 500);
 }
 
 // Update character count
@@ -50,62 +183,92 @@ function updateCharCount() {
   charCount.textContent = count.toLocaleString();
 }
 
-// Debounce function to prevent too many saves
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+// Render note tabs
+function renderTabs() {
+  tabsContainer.innerHTML = '';
+  
+  notes.forEach(note => {
+    const tab = document.createElement('button');
+    tab.className = 'note-tab';
+    if (note.id === activeNoteId) {
+      tab.classList.add('active');
+    }
+    
+    const tabText = document.createElement('span');
+    tabText.className = 'note-tab-text';
+    tabText.textContent = note.title || 'New Note';
+    tabText.title = note.title || 'New Note';
+    
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'note-tab-close';
+    closeBtn.innerHTML = `
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+    
+    tab.appendChild(tabText);
+    tab.appendChild(closeBtn);
+    
+    // Click tab to switch
+    tabText.addEventListener('click', (e) => {
+      e.stopPropagation();
+      switchToNote(note.id);
+    });
+    
+    // Click close button to delete
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      activeNoteId = note.id;
+      deleteNote();
+    });
+    
+    tabsContainer.appendChild(tab);
+  });
 }
 
-// Debounced save function
-const debouncedSave = debounce(saveContent, 500);
-
-// Clear notes with confirmation
-async function clearNotes() {
-  if (notepad.value.trim() === '') {
-    return;
-  }
-  
-  if (confirm('Are you sure you want to clear all notes?')) {
-    notepad.value = '';
-    updateCharCount();
-    await saveContent();
-    clearBtn.classList.add('clearing');
-    setTimeout(() => {
-      clearBtn.classList.remove('clearing');
-    }, 500);
-  }
+// Update tabs UI (active state)
+function updateTabsUI() {
+  const tabs = tabsContainer.querySelectorAll('.note-tab');
+  tabs.forEach((tab, index) => {
+    if (notes[index] && notes[index].id === activeNoteId) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
 }
 
 // Event listeners
 notepad.addEventListener('input', () => {
   updateCharCount();
-  debouncedSave();
+  autoSave();
 });
 
-clearBtn.addEventListener('click', clearNotes);
+deleteNoteBtn.addEventListener('click', deleteNote);
+addNoteBtn.addEventListener('click', createNewNote);
 
 // Keyboard shortcuts
 notepad.addEventListener('keydown', (e) => {
   // Ctrl/Cmd + S to manually save
   if ((e.ctrlKey || e.metaKey) && e.key === 's') {
     e.preventDefault();
-    saveContent();
+    saveCurrentNote();
+    saveNotes();
   }
   
-  // Ctrl/Cmd + Shift + Delete to clear
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Delete') {
+  // Ctrl/Cmd + N to create new note
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
     e.preventDefault();
-    clearNotes();
+    createNewNote();
+  }
+  
+  // Ctrl/Cmd + W to close current note
+  if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+    e.preventDefault();
+    deleteNote();
   }
 });
 
-// Initialize
-loadSavedContent();
-notepad.focus();
+// Initialize on load
+init();
