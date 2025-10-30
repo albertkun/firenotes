@@ -285,12 +285,9 @@ function updateColorPickerUI() {
   const currentColor = note ? note.color || 'default' : 'default';
   
   // Update active state on color options
-  document.querySelectorAll('.color-option').forEach(option => {
-    if (option.dataset.color === currentColor) {
-      option.classList.add('active');
-    } else {
-      option.classList.remove('active');
-    }
+  const colorOptions = document.querySelectorAll('.color-option');
+  colorOptions.forEach(option => {
+    option.classList.toggle('active', option.dataset.color === currentColor);
   });
 }
 
@@ -319,7 +316,7 @@ document.querySelectorAll('.color-option').forEach(option => {
 
 // Close color picker when clicking outside
 document.addEventListener('click', (e) => {
-  if (!colorPickerDropdown.contains(e.target) && e.target !== colorPickerBtn) {
+  if (!colorPickerDropdown.contains(e.target) && !colorPickerBtn.contains(e.target)) {
     colorPickerDropdown.classList.remove('show');
   }
 });
