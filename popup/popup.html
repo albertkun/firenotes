@@ -18,6 +18,12 @@
           <span>FireNotes</span>
         </div>
         <div class="header-actions">
+          <button id="colorPickerBtn" class="btn-icon" title="Change note color">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
           <button id="deleteNoteBtn" class="btn-icon" title="Delete current note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 6H21M8 6V4C8 3.44772 8.44772 3 9 3H15C15.5523 3 16 3.44772 16 4V6M19 6V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V6H19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -29,6 +35,35 @@
     </header>
 
     <main class="main">
+      <div class="color-picker-dropdown" id="colorPickerDropdown">
+        <div class="color-picker-header">Choose a color</div>
+        <div class="color-palette">
+          <button class="color-option" data-color="default" title="Default">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);"></div>
+          </button>
+          <button class="color-option" data-color="yellow" title="Yellow">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);"></div>
+          </button>
+          <button class="color-option" data-color="pink" title="Pink">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);"></div>
+          </button>
+          <button class="color-option" data-color="blue" title="Blue">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);"></div>
+          </button>
+          <button class="color-option" data-color="green" title="Green">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);"></div>
+          </button>
+          <button class="color-option" data-color="purple" title="Purple">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);"></div>
+          </button>
+          <button class="color-option" data-color="orange" title="Orange">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);"></div>
+          </button>
+          <button class="color-option" data-color="red" title="Red">
+            <div class="color-swatch" style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);"></div>
+          </button>
+        </div>
+      </div>
       <div class="notes-container">
         <textarea 
           id="notepad" 

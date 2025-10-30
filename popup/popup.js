@@ -5,6 +5,8 @@ const addNoteBtn = document.getElementById('addNoteBtn');
 const charCount = document.getElementById('charCount');
 const saveStatus = document.getElementById('saveStatus');
 const tabsContainer = document.getElementById('tabsContainer');
+const colorPickerBtn = document.getElementById('colorPickerBtn');
+const colorPickerDropdown = document.getElementById('colorPickerDropdown');
 
 // Storage keys
 const NOTES_KEY = 'firenotes_notes';
@@ -64,8 +66,10 @@ async function loadActiveNote() {
   const note = notes.find(n => n.id === activeNoteId);
   if (note) {
     notepad.value = note.content || '';
+    notepad.setAttribute('data-color', note.color || 'default');
     updateCharCount();
     updateTabsUI();
+    updateColorPickerUI();
   }
 }
 
@@ -75,6 +79,7 @@ function createNewNote() {
     id: generateId(),
     content: '',
     title: `Note ${notes.length + 1}`,
+    color: 'default',
     createdAt: Date.now(),
     updatedAt: Date.now()
   };
@@ -267,6 +272,55 @@ notepad.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
     e.preventDefault();
     deleteNote();
+  }
+});
+
+// Color picker functionality
+function toggleColorPicker() {
+  colorPickerDropdown.classList.toggle('show');
+}
+
+function updateColorPickerUI() {
+  const note = notes.find(n => n.id === activeNoteId);
+  const currentColor = note ? note.color || 'default' : 'default';
+  
+  // Update active state on color options
+  document.querySelectorAll('.color-option').forEach(option => {
+    if (option.dataset.color === currentColor) {
+      option.classList.add('active');
+    } else {
+      option.classList.remove('active');
+    }
+  });
+}
+
+function changeNoteColor(color) {
+  const note = notes.find(n => n.id === activeNoteId);
+  if (note) {
+    note.color = color;
+    notepad.setAttribute('data-color', color);
+    saveNotes();
+    updateColorPickerUI();
+    colorPickerDropdown.classList.remove('show');
+  }
+}
+
+// Color picker event listeners
+colorPickerBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleColorPicker();
+});
+
+document.querySelectorAll('.color-option').forEach(option => {
+  option.addEventListener('click', () => {
+    changeNoteColor(option.dataset.color);
+  });
+});
+
+// Close color picker when clicking outside
+document.addEventListener('click', (e) => {
+  if (!colorPickerDropdown.contains(e.target) && e.target !== colorPickerBtn) {
+    colorPickerDropdown.classList.remove('show');
   }
 });
 
