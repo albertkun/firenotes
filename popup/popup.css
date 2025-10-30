@@ -156,7 +156,7 @@ footer {
   color: var(--primary-color);
 }
 
-#saveStatus.saving .save-icon {
+.auto-save-indicator.saving .save-icon {
   animation: pulse 1s ease-in-out infinite;
 }
 

@@ -25,6 +25,7 @@ async function saveContent() {
   try {
     saveStatus.textContent = 'Saving...';
     saveStatus.classList.add('saving');
+    saveStatus.parentElement.classList.add('saving');
     
     await browser.storage.local.set({
       [STORAGE_KEY]: notepad.value
@@ -33,13 +34,13 @@ async function saveContent() {
     setTimeout(() => {
       saveStatus.textContent = 'Auto-saved';
       saveStatus.classList.remove('saving');
+      saveStatus.parentElement.classList.remove('saving');
     }, 300);
   } catch (error) {
     console.error('Error saving content:', error);
-    saveStatus.textContent = 'Error saving';
-    setTimeout(() => {
-      saveStatus.textContent = 'Auto-saved';
-    }, 2000);
+    saveStatus.textContent = 'Save failed';
+    saveStatus.classList.remove('saving');
+    saveStatus.parentElement.classList.remove('saving');
   }
 }
 
