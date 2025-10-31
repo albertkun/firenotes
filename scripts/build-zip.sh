@@ -49,14 +49,17 @@ NAME_SLUG=$(printf '%s' "${NAME_RAW:-extension}" \
   | sed -e 's/^-\+//' -e 's/-\+$//')
 [[ -z "$NAME_SLUG" ]] && NAME_SLUG="extension"
 
+# Force artifact base to firepad for consistency
+ARTIFACT_BASE="firepad"
+
 OUT_DIR="web-ext-artifacts"
 # Use absolute path for output file so zip executed from staging dir can write it
-OUT_FILE="${REPO_ROOT}/${OUT_DIR}/${NAME_SLUG}-${VERSION}.zip"
+OUT_FILE="${REPO_ROOT}/${OUT_DIR}/${ARTIFACT_BASE}-${VERSION}.zip"
 
 mkdir -p "${REPO_ROOT}/${OUT_DIR}"
 
 # Create staging area to control what goes into the zip
-STAGE_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t firenotes-build-XXXXXX)"
+STAGE_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t firepad-build-XXXXXX)"
 cleanup() { rm -rf "$STAGE_DIR"; }
 trap cleanup EXIT
 
@@ -99,3 +102,4 @@ cd "$OLDPWD"
 # Show result
 SIZE_BYTES=$(stat -c%s "$OUT_FILE" 2>/dev/null || wc -c < "$OUT_FILE")
 echo "Created: $OUT_FILE (${SIZE_BYTES} bytes)"
+echo "Tip: Load the ZIP via about:debugging → This Firefox → Load Temporary Add-on..."

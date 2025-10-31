@@ -12,9 +12,11 @@ const copyBtn = document.getElementById('copyBtn');
 const pastePlainBtn = document.getElementById('pastePlainBtn');
 const customColorInput = document.getElementById('customColorInput');
 
-// Storage keys
-const NOTES_KEY = 'firenotes_notes';
-const ACTIVE_NOTE_KEY = 'firenotes_active_note';
+// Storage keys (renamed to firepad_*)
+const NOTES_KEY = 'firepad_notes';
+const ACTIVE_NOTE_KEY = 'firepad_active_note';
+const OLD_NOTES_KEY = 'firenotes_notes';
+const OLD_ACTIVE_NOTE_KEY = 'firenotes_active_note';
 
 // State
 let notes = [];
@@ -45,6 +47,21 @@ async function loadNotes() {
     const result = await browser.storage.local.get([NOTES_KEY, ACTIVE_NOTE_KEY]);
     notes = result[NOTES_KEY] || [];
     activeNoteId = result[ACTIVE_NOTE_KEY] || null;
+
+    // Migrate from old keys if needed
+    if ((!notes || notes.length === 0) && !activeNoteId) {
+      const legacy = await browser.storage.local.get([OLD_NOTES_KEY, OLD_ACTIVE_NOTE_KEY]);
+      const oldNotes = legacy[OLD_NOTES_KEY] || [];
+      const oldActive = legacy[OLD_ACTIVE_NOTE_KEY] || null;
+      if (oldNotes && oldNotes.length) {
+        notes = oldNotes;
+        activeNoteId = oldActive || (oldNotes[0] && oldNotes[0].id) || null;
+        await browser.storage.local.set({
+          [NOTES_KEY]: notes,
+          [ACTIVE_NOTE_KEY]: activeNoteId
+        });
+      }
+    }
   } catch (error) {
     console.error('Error loading notes:', error);
     notes = [];

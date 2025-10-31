@@ -1,11 +1,11 @@
-# FireNotes Privacy Policy
+# FirePad Privacy Policy
 
 Effective date: 2025-10-30
 
-FireNotes is designed with privacy by default. It does not collect, transmit, or sell any personal data.
+FirePad is designed with privacy by default. It does not collect, transmit, or sell any personal data.
 
 ## What data is collected
-- None. FireNotes does not collect analytics, telemetry, or any usage data.
+- None. FirePad does not collect analytics, telemetry, or any usage data.
 - No information is sent to any server or third party.
 
 ## Where your data lives
@@ -33,10 +33,10 @@ FireNotes is designed with privacy by default. It does not collect, transmit, or
 - No third-party services are integrated. No data sharing occurs.
 
 ## Children’s privacy
-- FireNotes does not target or market to children and does not collect any data.
+- FirePad does not target or market to children and does not collect any data.
 
 ## Changes to this policy
 - If this policy changes, the "Effective date" above will be updated. Material changes will be reflected in the repository.
 
 ## Contact
-For questions or issues, open an issue at: https://github.com/albertkun/firenotes/issues
+For questions or issues, open an issue at: https://github.com/albertkun/firepad/issues

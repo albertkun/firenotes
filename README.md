@@ -1,8 +1,8 @@
-# FireNotes 🔥📝
+# FirePad 🔥📝
 
 A modern, lightweight Firefox extension that provides a quick popup notepad with multiple pages for organizing notes. Inspired by Windows Sticky Notes with a clean, modern shadcn/ui design aesthetic.
 
-![FireNotes](icons/icon-96.png)
+![FirePad](icons/icon-96.png)
 
 ## Features ✨
 
@@ -27,8 +27,8 @@ A modern, lightweight Firefox extension that provides a quick popup notepad with
 
 1. **Clone or Download** this repository:
    ```bash
-   git clone https://github.com/albertkun/firenotes.git
-   cd firenotes
+   git clone https://github.com/albertkun/firepad.git
+   cd firepad
    ```
 
 2. **Open Firefox** and navigate to `about:debugging`
@@ -37,9 +37,9 @@ A modern, lightweight Firefox extension that provides a quick popup notepad with
 
 4. Click "**Load Temporary Add-on...**"
 
-5. Navigate to the `firenotes` directory and select the `manifest.json` file
+5. Navigate to the `firepad` directory and select the `manifest.json` file
 
-6. The FireNotes icon should now appear in your Firefox toolbar! 🎉
+6. The FirePad icon should now appear in your Firefox toolbar! 🎉
 
 ### For Permanent Installation (Unsigned)
 
@@ -52,7 +52,7 @@ For Firefox Developer Edition or Firefox Nightly:
 
 ## Usage 💡
 
-1. **Open the notepad**: Click the FireNotes icon in your Firefox toolbar
+1. **Open the notepad**: Click the FirePad icon in your Firefox toolbar
 2. **Start typing**: The notepad automatically focuses and is ready to use
 3. **Auto-save**: Your notes are saved automatically as you type
 4. **Add new notes**: Click the floating "+" button at the bottom-right
@@ -68,7 +68,7 @@ The extension is built with vanilla JavaScript, HTML, and CSS. No build process 
 ### File Structure
 
 ```
-firenotes/
+firepad/
 ├── manifest.json          # Extension configuration
 ├── icons/                 # Extension icons
 │   ├── icon-48.png
@@ -77,7 +77,7 @@ firenotes/
 │   ├── popup.html        # HTML structure
 │   ├── popup.css         # Styles
 │   └── popup.js          # JavaScript functionality
-├── LICENSE               # GPL-3.0 License
+├── LICENSE               # License
 └── README.md            # This file
 ```
 
@@ -98,17 +98,15 @@ Contributions are welcome! Feel free to:
 
 ## License 📄
 
-Hippocratic License 3.0 (see `LICENSE` and `LICENSE-ETHICAL.md`).
-
-Using the Ethical Source option requires compliance with the Hippocratic License terms. If you need an OSI-approved license only, use GPL-3.0.
+Hippocratic License 3.0 (see `LICENSE`).
 
 ## Privacy 🔒
 
-See the privacy policy in `PRIVACY.md`. FireNotes stores data locally and does not send data to any server.
+See the privacy policy in `PRIVACY.md`. FirePad stores data locally and does not send data to any server.
 
 ## Support 💬
 
-If you encounter any issues or have questions, please [open an issue](https://github.com/albertkun/firenotes/issues) on GitHub.
+If you encounter any issues or have questions, please [open an issue](https://github.com/albertkun/firepad/issues) on GitHub.
 
 ---
 

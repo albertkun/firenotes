@@ -1,4 +1,4 @@
-# FireNotes Installation Guide
+# FirePad Installation Guide
 
 ## Quick Installation (For Testing)
 
@@ -7,8 +7,8 @@
 1. **Open Firefox** and navigate to `about:debugging` in the address bar
 2. Click on **"This Firefox"** in the left sidebar
 3. Click the **"Load Temporary Add-on..."** button
-4. Navigate to your `firenotes` folder and select the `manifest.json` file
-5. The FireNotes icon should appear in your toolbar!
+4. Navigate to your `firepad` folder and select the `manifest.json` file
+5. The FirePad icon should appear in your toolbar!
 
 **Note**: Temporary add-ons are removed when you close Firefox.
 
@@ -16,13 +16,13 @@
 
 1. Build the extension (if not already built):
    ```bash
-   cd firenotes
+   cd firepad
    npm install -g web-ext
    web-ext build
    ```
 
 2. Go to `about:debugging` → **"This Firefox"** → **"Load Temporary Add-on..."**
-3. Select the `web-ext-artifacts/firenotes-1.0.0.zip` file
+3. Select the `web-ext-artifacts/firepad-1.0.0.zip` file
 
 ## Permanent Installation
 
@@ -36,7 +36,7 @@
 2. **Install the extension**:
    - Navigate to `about:addons`
    - Click the gear icon → "Install Add-on From File..."
-   - Select the `firenotes-1.0.0.zip` file
+   - Select the `firepad-1.0.0.zip` file
 
 ### For Firefox Release (Requires Signing)
 
@@ -49,13 +49,13 @@ To permanently install on Firefox Release, you'll need to:
 ## Verifying Installation
 
 After installation, you should see:
-- ✅ A FireNotes icon in your Firefox toolbar
+- ✅ A FirePad icon in your Firefox toolbar
 - ✅ Clicking it opens a popup with a notepad interface
 - ✅ Your notes persist across browser sessions
 
 ## Usage
 
-1. **Open**: Click the FireNotes icon in your toolbar
+1. **Open**: Click the FirePad icon in your toolbar
 2. **Write**: Start typing or paste content
 3. **Auto-save**: Your notes save automatically as you type
 4. **Clear**: Click the trash icon to clear all notes
@@ -80,7 +80,7 @@ After installation, you should see:
 ## Uninstallation
 
 1. Navigate to `about:addons`
-2. Find "FireNotes" in the extensions list
+2. Find "FirePad" in the extensions list
 3. Click the three dots menu → "Remove"
 
 ## Development
@@ -94,7 +94,7 @@ To modify the extension:
 ## Support
 
 For issues or questions, please visit:
-https://github.com/albertkun/firenotes/issues
+https://github.com/albertkun/firepad/issues
 
 ## Privacy
-FireNotes stores notes locally in your browser and does not send data anywhere. See `PRIVACY.md` for details.
+FirePad stores notes locally in your browser and does not send data anywhere. See `PRIVACY.md` for details.

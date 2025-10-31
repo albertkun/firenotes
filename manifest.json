@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "FireNotes",
-  "version": "1.0.0",
+  "name": "FirePad",
+  "version": "1.0.1",
   "description": "A quick popup notepad for copying and pasting content",
   "icons": {
     "48": "icons/icon-48.png",
@@ -11,7 +11,7 @@
     "default_icon": {
       "48": "icons/icon-48.png"
     },
-    "default_title": "FireNotes",
+    "default_title": "FirePad",
     "default_popup": "popup/popup.html"
   },
   "options_ui": {
